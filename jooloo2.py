@@ -1,39 +1,15 @@
 from bitarray import bitarray
 
-def getAsArray(msg, tree):
-    msgInCode = []
-    for key, code in tree.iteritems():
-        msgInCode.append(tree[key])
-    return msgInCode
-
-def reverseDictionary(dic):
+def getReverseDictionary(dic):
     return {v: k for k, v in dic.iteritems()}
-	
-# Initialization: We have 'msg', a non-empty plaintext string.	
-def code(msg):
-    letterDic = {}
-    letters = []
-    
+
+def getHuffmanTree(frequencyList, msg):
     #used to sort list
     def getKey(item):
         return item[0]
     
-    tupleList = []
- 
-    splitMsg = list(msg)
-    
-    while len(splitMsg) != 0:
-        char = splitMsg[0]
-        letters.append(char)
-        frequency = splitMsg.count(char)
-        #build tuple
-        tupleList.append((frequency, 1, char))
-        
-        #removes all instances of char from splitMsg list
-        splitMsg[:] = [item for item in splitMsg if item != char]
-
     #Sort list by frequency
-    sortedTupleList = sorted(tupleList, key=getKey)
+    sortedTupleList = sorted(frequencyList, key=getKey)
     
     # Maintanence: Every iteration we generate a Huffman code
 	
@@ -67,13 +43,27 @@ def code(msg):
             elif i == len(sortedTupleList)-1:
                 sortedTupleList.append(myTuple)
                 
-                                        
-                
-        sortedTupleList = sorted(sortedTupleList, key=getKey)
+    return sortedTupleList
 
-    #print sortedTupleList
+# Initialization: We have 'msg', a non-empty plaintext string.	
+def code(msg):
+    letterDic = {}
+    tupleList = []
+    letters = []
 
+    splitMsg = list(msg)
+    
+    while len(splitMsg) != 0:
+        char = splitMsg[0]
+        letters.append(char)
+        frequency = splitMsg.count(char)
+        #build tuple
+        tupleList.append((frequency, 1, char))
+        
+        #removes all instances of char from splitMsg list
+        splitMsg[:] = [item for item in splitMsg if item != char]
 
+    sortedTupleList = getHuffmanTree(tupleList, msg)
 
     firstHalf = list(sortedTupleList[0])
     
@@ -99,15 +89,15 @@ def code(msg):
     print letterDic
     
     for element in msg:
-        print letterDic[element]
+        #print letterDic[element]
         codedMsg = codedMsg + letterDic[element]
     
     return codedMsg, (len(codedMsg), letterDic)
 
 def decode(str, decoderRing):
     print decoderRing[1]
-    decoder = reverseDictionary(decoderRing[1])
-    print decoder
+    decoder = getReverseDictionary(decoderRing[1])
+    #print decoder
     string = ""
     codeWord = []
 
@@ -123,27 +113,23 @@ def decode(str, decoderRing):
     return finalCode            
 
 
-def compress(msg, tree):
-    dic = tree
-    print "coded str len =", code(msg)[0], "\ncoded dict =", dic
-    huffMsg = getAsArray(msg, reverseDictionary(dic))
-    print "huffmsg = ", huffMsg
+def compress(msg):
+    msg, tree = code(msg)
     a = bitarray()
-    
     for b in msg:
-        a.append(bool(b))
+        a.append(bool(int(b)))
+    return (a.tobytes(), tree)
 
-    print(a)
+def decompress(msg, tree):
+    b = bitarray()
+    b.frombytes(msg)
+    bitsAsString = ""
+    for bit in range(0, tree[0]):
+        bitsAsString += str(int(b[bit]))
+    return decode(bitsAsString, tree)
 
-
-codeWord = "secretMsg"
-msg, tree = code(codeWord)
-compress(msg, tree[0])
-#codeMsg, decoder = code(codeWord)
-#print(codeMsg)
-
-#myMsg= decode(codeMsg, decoder)
-
-#print(myMsg)
-
-#compress(codeMsg,decoder)
+codeWord = "secretMsg"#"the quick brown frog jumped over the lazy fox"
+print "codeword len =", len(codeWord)
+msg, tree = compress(codeWord)
+print msg, tree
+print(decompress(msg, tree))
