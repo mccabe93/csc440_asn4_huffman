@@ -23,10 +23,15 @@ def code(msg):
         #removes all instances of char from splitMsg list
         splitMsg[:] = [item for item in splitMsg if item != char]
 
+#    print(tupleList)
+#    for element in tupleList:
+#        print(len(element))
+
     #Sort list by frequency
     sortedTupleList = sorted(tupleList, key=getKey)
     
     while len(sortedTupleList) != 2:
+        #print(sortedTupleList)
         #get first two in list, sum frequencys, to make new tuple.
         firstTuple = sortedTupleList[0]
         secondTuple = sortedTupleList[1]
@@ -43,6 +48,9 @@ def code(msg):
         sortedTupleList.remove(firstTuple)
         sortedTupleList.remove(secondTuple)
 
+        #add combined tuples
+        #sortedTupleList.append(myTuple)
+
         #Resort
         for i in range(0, len(sortedTupleList)):
             if myTuple[0] <= sortedTupleList[i][0]:
@@ -55,10 +63,30 @@ def code(msg):
                                         
                 
         sortedTupleList = sorted(sortedTupleList, key=getKey)
+        #print(sortedTupleList)
+#    for i in range(0, len(sortedTupleList)):
+#        sortedTupleList[i] = tuple(list(sortedTupleList[i]).insert(1, len(sortedTupleList[i])))
+    print sortedTupleList
+
+#    currentTuple = sortedTupleList[0]
+
+##    for i in range(0, len(sortedTupleList[0])):
+##        
+##        print "Current Tuple:", currentTuple
+
+##    oldFirst = sortedTupleList[0][2]
+##    print(oldFirst)
+##    sortedTupleList[0][2] = sortedTupleList[0][3]
+##    sortedTupleList[0][3] = oldFirst
+
+    #MC
 
     firstHalf = list(sortedTupleList[0])
+    #print("Here")
+    #print(firstHalf)
     
     def getStr(sublist, string, destination, half):
+        #print sublist
         if (sublist[1] == 1 and sublist[2] == destination):
             letterDic[sublist[2]] = string
         elif len(sublist[2]) < 2:
@@ -75,44 +103,39 @@ def code(msg):
     for letter in letters:
         if getStr(sortedTupleList[0], "0", letter, 0) == None:
             getStr(sortedTupleList[1], "1", letter, 1)
-    
-    msgInCode = "".join(getAsArray(msg))
-    return msgInCode
-    
-aCode = code("MiMiiIlkeeee") 
-print(aCode)
+
+
+    print(letterDic)
+
+code("Mike")
 invLetterDic = {v: k for k, v in letterDic.iteritems()}
-print(invLetterDic)
-print(invLetterDic["10"])
+
 check = ('10' in invLetterDic.values())
-print(check)
+
+
+
+##print("!!!!!!")
+##print(invLetterDic)
 
 def decode(str, decoderRing):
     string = ""
     codeWord = []
 
     for i in range(len(str)):
+
         string = string + str[i]
+
         if(string in decoderRing.keys()):
             codeWord.append(decoderRing[string])
             string = ""
             
         finalCode = "".join(codeWord)
     return finalCode
-
-def getAsArray(msg):
-    msgInCode = []
-    for element in msg:
-        msgInCode.append(letterDic[element])
-    return msgInCode
-
-def compress(string):
-    
         
-codeWord = decode(aCode,invLetterDic)
-print(codeWord)            
 
-    
+        
+codeWord = decode("10110100",invLetterDic)
+print(codeWord)            
 
         
 
