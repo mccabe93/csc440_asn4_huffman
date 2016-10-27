@@ -6,11 +6,13 @@ def getAsArray(msg, tree):
         msgInCode.append(tree[key])
     return msgInCode
 
+def reverseDictionary(dic):
+    return {v: k for k, v in dic.iteritems()}
 	
 # Initialization: We have 'msg', a non-empty plaintext string.	
 def code(msg):
     letterDic = {}
-    letters = {}
+    letters = []
     
     #used to sort list
     def getKey(item):
@@ -22,6 +24,7 @@ def code(msg):
     
     while len(splitMsg) != 0:
         char = splitMsg[0]
+        letters.append(char)
         frequency = splitMsg.count(char)
         #build tuple
         tupleList.append((frequency, 1, char))
@@ -32,7 +35,7 @@ def code(msg):
     #Sort list by frequency
     sortedTupleList = sorted(tupleList, key=getKey)
     
-	# Maintanence
+    # Maintanence: Every iteration we generate a Huffman code
 	
     while len(sortedTupleList) != 2:
         #print(sortedTupleList)
@@ -68,7 +71,7 @@ def code(msg):
                 
         sortedTupleList = sorted(sortedTupleList, key=getKey)
 
-    print sortedTupleList
+    #print sortedTupleList
 
 
 
@@ -93,25 +96,27 @@ def code(msg):
             getStr(sortedTupleList[1], "1", letter, 1)
 
     codedMsg = ""
-
+    print letterDic
+    
     for element in msg:
+        print letterDic[element]
         codedMsg = codedMsg + letterDic[element]
     
     return codedMsg, (len(codedMsg), letterDic)
 
-def getInverseDictionary(dict):
-	return {v: k for k, v in dict.iteritems()}
-
 def decode(str, decoderRing):
+    print decoderRing[1]
+    decoder = reverseDictionary(decoderRing[1])
+    print decoder
     string = ""
     codeWord = []
 
     for i in range(len(str)):
 
         string = string + str[i]
-
-        if(string in decoderRing.keys()):
-            codeWord.append(decoderRing[string])
+        
+        if(string in decoder.keys()):
+            codeWord.append(decoder[string])
             string = ""
             
     finalCode = "".join(codeWord)
@@ -119,26 +124,26 @@ def decode(str, decoderRing):
 
 
 def compress(msg, tree):
-    dic = code(msg)[1]
+    dic = tree
     print "coded str len =", code(msg)[0], "\ncoded dict =", dic
-    invDic = {v: k for k, v in dic.iteritems()}
-    huffMsg = getAsArray(msg, invDic)
+    huffMsg = getAsArray(msg, reverseDictionary(dic))
     print "huffmsg = ", huffMsg
     a = bitarray()
     
-#    for b in msg:
-#        a.append(bool(b))
+    for b in msg:
+        a.append(bool(b))
 
     print(a)
 
 
-
 codeWord = "secretMsg"
-codeMsg, decoder = code(codeWord)
-print(codeMsg)
+msg, tree = code(codeWord)
+compress(msg, tree[0])
+#codeMsg, decoder = code(codeWord)
+#print(codeMsg)
 
-myMsg= decode(codeMsg, decoder)
+#myMsg= decode(codeMsg, decoder)
 
-print(myMsg)
+#print(myMsg)
 
 #compress(codeMsg,decoder)
