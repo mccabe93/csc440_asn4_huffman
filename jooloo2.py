@@ -13,8 +13,7 @@ def getHuffmanTree(frequencyList, msg):
     
     # Maintanence: Every iteration we generate a Huffman code
 	
-    while len(sortedTupleList) != 2:
-        #print(sortedTupleList)
+    while len(sortedTupleList) != 1:
         #get first two in list, sum frequencys, to make new tuple.
         firstTuple = sortedTupleList[0]
         secondTuple = sortedTupleList[1]
@@ -33,7 +32,9 @@ def getHuffmanTree(frequencyList, msg):
 
         #add combined tuples
         #sortedTupleList.append(myTuple)
-
+        if len(sortedTupleList) == 0:
+            sortedTupleList.append(myTuple)
+            break
         #Resort
         for i in range(0, len(sortedTupleList)):
             if myTuple[0] <= sortedTupleList[i][0]:
@@ -62,36 +63,27 @@ def code(msg):
         
         #removes all instances of char from splitMsg list
         splitMsg[:] = [item for item in splitMsg if item != char]
-
+    print len(letters)
     sortedTupleList = getHuffmanTree(tupleList, msg)
-
-    firstHalf = list(sortedTupleList[0])
-    
-    def getStr(sublist, string, destination, half):
+    print sortedTupleList
+    def getStr(sublist, string, destination):
         if (sublist[1] == 1 and sublist[2] == destination):
             letterDic[sublist[2]] = string
         elif len(sublist[2]) < 2:
             return
         else:
-            x = 3
-            y = 2
-            if half == 1:
-                x = 2
-                y = 3
-            getStr(sublist[x], string + "0", destination, half)
-            getStr(sublist[y], string + "1", destination, half)
+            getStr(sublist[2], string + "0", destination)
+            getStr(sublist[3], string + "1", destination)
             
     for letter in letters:
-        if getStr(sortedTupleList[0], "0", letter, 0) == None:
-            getStr(sortedTupleList[1], "1", letter, 1)
+        getStr(sortedTupleList[0], "", letter)
 
     codedMsg = ""
     print letterDic
     
     for element in msg:
-        #print letterDic[element]
         codedMsg = codedMsg + letterDic[element]
-    
+    print len(codedMsg)
     return codedMsg, (len(codedMsg), letterDic)
 
 def decode(str, decoderRing):
@@ -128,8 +120,6 @@ def decompress(msg, tree):
         bitsAsString += str(int(b[bit]))
     return decode(bitsAsString, tree)
 
-codeWord = "secretMsg"#"the quick brown frog jumped over the lazy fox"
-print "codeword len =", len(codeWord)
+codeWord = "the quick brown frog jumped over the lazy fox"
 msg, tree = compress(codeWord)
-print msg, tree
-print(decompress(msg, tree))
+print decompress(msg, tree)
