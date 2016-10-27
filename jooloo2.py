@@ -6,6 +6,8 @@ def getAsArray(msg, tree):
         msgInCode.append(tree[key])
     return msgInCode
 
+	
+# Initialization: We have 'msg', a non-empty plaintext string.	
 def code(msg):
     letterDic = {}
     letters = {}
@@ -20,7 +22,6 @@ def code(msg):
     
     while len(splitMsg) != 0:
         char = splitMsg[0]
-        letters[char] = 'L'
         frequency = splitMsg.count(char)
         #build tuple
         tupleList.append((frequency, 1, char))
@@ -31,6 +32,8 @@ def code(msg):
     #Sort list by frequency
     sortedTupleList = sorted(tupleList, key=getKey)
     
+	# Maintanence
+	
     while len(sortedTupleList) != 2:
         #print(sortedTupleList)
         #get first two in list, sum frequencys, to make new tuple.
@@ -88,18 +91,16 @@ def code(msg):
     for letter in letters:
         if getStr(sortedTupleList[0], "0", letter, 0) == None:
             getStr(sortedTupleList[1], "1", letter, 1)
-            
-    invLetterDic = {v: k for k, v in letterDic.iteritems()}
 
     codedMsg = ""
 
     for element in msg:
         codedMsg = codedMsg + letterDic[element]
-
     
-    return codedMsg, invLetterDic
+    return codedMsg, (len(codedMsg), letterDic)
 
-
+def getInverseDictionary(dict):
+	return {v: k for k, v in dict.iteritems()}
 
 def decode(str, decoderRing):
     string = ""
@@ -118,8 +119,8 @@ def decode(str, decoderRing):
 
 
 def compress(msg, tree):
-    dic = code(msg)
-    print dic
+    dic = code(msg)[1]
+    print "coded str len =", code(msg)[0], "\ncoded dict =", dic
     invDic = {v: k for k, v in dic.iteritems()}
     huffMsg = getAsArray(msg, invDic)
     print "huffmsg = ", huffMsg
