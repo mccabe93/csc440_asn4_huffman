@@ -55,6 +55,13 @@ try:
 except:
     import pickle
 
+
+"""
+Initilization:
+Maintainance:
+Termination:
+
+"""
 def code(msg):
     letterDic = {}
     tupleList = []
@@ -93,14 +100,26 @@ def code(msg):
     
     return codedMsg, (len(codedMsg), letterDic)
 
-def decode(str, decoderRing):
+
+"""
+Initialization: There is a huffman encoded string message and a huffman tree that
+exist.
+
+Maintainace: At each step for a message of length N, A leading combination of characters in the huffman encoded string
+correspond to a plaintext letter in the huffman tree that are used to build a decoded message and are removed from the encoded
+string.
+
+Termination. Every binary character has been visited in the coded message to generate the original message in plaintext.
+
+"""
+def decode(msg, decoderRing):
     decoder = getReverseDictionary(decoderRing[1])
     string = ""
     codeWord = []
 
-    for i in range(len(str)):
+    for i in range(len(msg)):
 
-        string = string + str[i]
+        string = string + msg[i]
         
         if(string in decoder.keys()):
             codeWord.append(decoder[string])
@@ -109,6 +128,10 @@ def decode(str, decoderRing):
     finalCode = "".join(codeWord)
     return finalCode
 
+
+"""
+
+"""
 def compress(msg):
     msg, tree = code(msg)
     a = bitarray()
