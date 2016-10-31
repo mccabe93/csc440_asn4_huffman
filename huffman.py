@@ -6,6 +6,20 @@ from bitarray import bitarray
 def getReverseDictionary(dic):
     return {v: k for k, v in dic.iteritems()}
 
+
+
+"""
+getHuffmanTree Invariant
+
+Initialization: A frequencyList and msg are passed to build a huffmanTree.
+
+Maintenance: For the sortedTupleList of length N, the length of sortedTupleList is reduced by N - 1  for each itteration
+by combining two elements with the smallest frequency and appending that union into sortedTupleList. This greedy algorithm
+requires a constant re-sorting of sortedTupleList and lets us know that progress is being made.
+
+Termination: When sorting sortedTupleList becomes trivial (length of sortedTupleList = 1) we know the algorithm will terminate.
+
+"""
 def getHuffmanTree(frequencyList, msg):
     #used to sort list
     def getKey(item):
@@ -57,9 +71,14 @@ except:
 
 
 """
-Initilization:
-Maintainance:
-Termination:
+Code Invaraint:
+
+Initilization: A string, msg, is given to become a Huffman-coded string.
+
+Maintainance: For the current character C, if it does not have an associated Huffman-code, generate a Huffman-code for C.
+
+Termination: Translate all characters of msg to their associated Huffman-codes and return the final translation. Also return a decoder
+ring containing the length of the final translation and the tree of associations.
 
 """
 def code(msg):
@@ -102,12 +121,16 @@ def code(msg):
 
 
 """
-Initialization: There is a huffman encoded string message and a huffman tree that
-exist.
+Decode Invaraint:
 
-Maintainace: At each step for a message of length N, A leading combination of characters in the huffman encoded string
-correspond to a plaintext letter in the huffman tree that are used to build a decoded message and are removed from the encoded
-string.
+Initialization: There is a Huffman-coded string message and a huffman tree that exist.
+
+Maintainace: At the current index i for a message of length N, if some binary sequence i to n - i is a key in our Huffman tree,
+append the decoded value to the output string.  
+
+
+At each step for a message of length N, A leading combination of characters in the Huffman-coded string that
+correspond to a plaintext letter in the huffman tree are removed from the encoded string and used to build the original message.
 
 Termination. Every binary character has been visited in the coded message to generate the original message in plaintext.
 
@@ -115,6 +138,7 @@ Termination. Every binary character has been visited in the coded message to gen
 def decode(msg, decoderRing):
     decoder = getReverseDictionary(decoderRing[1])
     string = ""
+    finalCode = ""
     codeWord = []
 
     for i in range(len(msg)):
@@ -122,15 +146,21 @@ def decode(msg, decoderRing):
         string = string + msg[i]
         
         if(string in decoder.keys()):
-            codeWord.append(decoder[string])
+            finalCode += decoder[string]
             string = ""
             
-    finalCode = "".join(codeWord)
+
     return finalCode
 
 
 """
+Compress Invaraint:
 
+Initialization: A message, msg, is given to be compressed.
+
+Maintainace: The current character (string representation of a bit) in the message is appended to the bitstring.
+
+Termination: A bitstring corresponding to the Huffman-coded message and the associated huffman tree is returned.
 """
 def compress(msg):
     msg, tree = code(msg)
@@ -138,6 +168,18 @@ def compress(msg):
     for b in msg:
         a.append(bool(int(b)))
     return (a.tobytes(), tree)
+
+"""
+Decompress Invaraint:
+
+Initialization: A compressed bitstring and its respective huffman tree exist.
+
+Mantainace: Assume k is a string. If the current index i of the bitstring is <= the length of the Huffman-coded message
+(i.e ignore the padding to the right if any exists), convert the current bit to a string representation and append it to k.
+
+Termanation: Return the value of k after it is decoded with the Huffman tree.
+
+"""
 
 def decompress(msg, decoderRing):
     b = bitarray()
